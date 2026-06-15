@@ -1,0 +1,48 @@
+spring:
+  application:
+    name: gateway-service
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: auth-service
+              uri: lb://AUTH-SERVICE
+              predicates:
+                - Path=/api/login/**
+
+            - id: admin-service
+              uri: lb://ADMIN-SERVICE
+              predicates:
+                - Path=/admin/**
+                
+            - id: partner-service
+              uri: lb://PARTNER-SERVICE
+              predicates:
+                - Path=/api/partners/** 
+
+            - id: shipments-service
+              uri: lb://SHIPMENTS-SERVICE
+              predicates:
+                - Path=/api/shipments/** 
+
+            - id: TRACKING-service
+              uri: lb://TRACKING-SERVICE
+              predicates:
+                - Path=/api/tracking/**  
+
+            - id: USER-service
+              uri: lb://USER-SERVICE
+              predicates:
+                - Path=/api/users/**,/admin/user/**         
+
+server:
+  port: 8083
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    hostname: localhost
+    prefer-ip-address: true
