@@ -3,7 +3,9 @@ package com.example.shipments_service.Controller;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,7 +33,7 @@ public class ShipmentController {
     @PostMapping("/shipments")
     public ResponseEntity<?> createShipment(@RequestBody CreateShipmentRequest request,@RequestHeader("X-USER-ID") String userId) {
         try {
-            ShipmentResponse response = shipmentService.createShipment(request,userId);
+            ShipmentResponse response = shipmentService.createShipment(request, userId);
             if (response != null) {
                 return ResponseEntity.ok(response);
             }
@@ -41,9 +43,8 @@ public class ShipmentController {
         }
     }
 
-
     @GetMapping("/UsersShipments")
-   public ResponseEntity<?> getallshipmentsOfLoggedUser(@RequestHeader("X-USER-EMAIL") String email) {
+    public ResponseEntity<?> getallshipmentsOfLoggedUser(@RequestHeader("X-USER-EMAIL") String email) {
         try {
             List<ShipmentResponse> response = shipmentService.getloggedInUserShipments(email);
             if (response != null) {
@@ -54,6 +55,7 @@ public class ShipmentController {
             return ResponseEntity.status(500).body("Error retrieving shipment: " + e.getMessage());
         }
     }
+
     @GetMapping("/{shipmentId}")
     public ResponseEntity<?> getShipmentById(@PathVariable String shipmentId) {
         try {
@@ -68,8 +70,10 @@ public class ShipmentController {
     }
 
     @GetMapping("/tracking/{trackingNumber}")
+    @Cacheable(value="Shipment",key="#trackingNumber")
     public ResponseEntity<?> getTrackingnumber(@PathVariable String trackingNumber) {
         try {
+            
             ShipmentResponse response = shipmentService.getShipmentByTracking(trackingNumber);
             if (response != null) {
                 return ResponseEntity.ok(response);
@@ -80,29 +84,33 @@ public class ShipmentController {
         }
     }
 
-    @GetMapping("/test")
-    public String test(
-            @RequestHeader(value = "X-USER-ID", required = false) String userId,
-            @RequestHeader(value = "X-USER-EMAIL", required = false) String email,
-            @RequestHeader(value = "X-USER-ROLE", required = false) String role) {
+  
 
-        return userId + " | " + email + " | " + role;
-    }
+    // @PostMapping("/shipments/test")
+    // public ResponseEntity<?> createShipment(
+    //         @RequestBody CreateShipmentRequest request,
+    //         @RequestHeader("X-USER-ID") String userId,
+    //         @RequestHeader("X-USER-EMAIL") String email,
+    //         @RequestHeader("X-USER-ROLE") String role) {
 
-    @PostMapping("/shipments/test")
-    public ResponseEntity<?> createShipment(
-            @RequestBody CreateShipmentRequest request,
-            @RequestHeader("X-USER-ID") String userId,
-            @RequestHeader("X-USER-EMAIL") String email,
-            @RequestHeader("X-USER-ROLE") String role) {
+    //     return ResponseEntity.ok(
+    //             Map.of(
+    //                     "userId", userId,
+    //                     "email", email,
+    //                     "role", role,
+    //                     "request", request));
 
-        return ResponseEntity.ok(
-                Map.of(
-                        "userId", userId,
-                        "email", email,
-                        "role", role,
-                        "request", request));
+    // }
 
-    }
+   
+    // @GetMapping("/check")
+    // public String check(
+    //         @RequestHeader("X-USER-ID") String userId,
+    //         @RequestHeader("X-USER-NAME") String username,
+    //         @RequestHeader("X-USER-EMAIL") String email,
+    //         @RequestHeader("X-USER-ROLE") String role) {
+
+    //     return userId + " | " + username + " | " + email + " | " + role;
+    // }
 
 }

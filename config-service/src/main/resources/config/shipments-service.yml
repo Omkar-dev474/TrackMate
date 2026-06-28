@@ -3,7 +3,7 @@ spring:
     name: shipments-service
   data:
     mongodb:
-      uri: mongodb://localhost:27017/TrackMate
+      uri: ${MONGODB_URI}
   kafka:
     consumer:
       group-id: shipment-details-group

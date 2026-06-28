@@ -2,74 +2,104 @@ package com.example.gateway_service;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 
 @Configuration
 @EnableWebFluxSecurity
 public class SecurityConfig {
 
-    @Bean
-    SecurityWebFilterChain springSecurityFilterChain(
-            ServerHttpSecurity http) {
+        @Bean
+        SecurityWebFilterChain springSecurityFilterChain(
+                        ServerHttpSecurity http) {
 
-        // return http
-        //         .csrf(ServerHttpSecurity.CsrfSpec::disable)
-        //         .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
-        //         .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
+                return http
+                                .csrf(ServerHttpSecurity.CsrfSpec::disable)
 
-        //         .authorizeExchange(exchange -> exchange
+                                .authorizeExchange(exchanges -> exchanges
 
-        //                 .pathMatchers("/api/login/**")
-        //                 .permitAll()
+                                                .pathMatchers(
+                                                                "/actuator/**",
+                                                                "/public/**",
+                                                                "/api/users/**",
+                                                                "/api/partners/**",
+                                                                "/api/shipments/tracking/**",
+                                                                "/api/tracking/**")
+                                                .permitAll()
 
-        //                 .anyExchange()
-        //                 .authenticated())
+                                                
 
-        //         .build();
-        
+                                                .anyExchange()
+                                                .authenticated())
 
-      
-        return http
-            .csrf(ServerHttpSecurity.CsrfSpec::disable)
-            .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
-            .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
+                                .oauth2ResourceServer(oauth -> oauth.jwt(Customizer.withDefaults()))
 
-            .authorizeExchange(exchange -> exchange
-                    .anyExchange().permitAll())
+                                .build();
 
-            .build();
+                // return http
+                // .csrf(ServerHttpSecurity.CsrfSpec::disable)
+                // .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
+                // .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
 
+                // .authorizeExchange(exchange -> exchange
 
-        // return http
-        //         .csrf(ServerHttpSecurity.CsrfSpec::disable)
-        //         .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
-        //         .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
+                // .pathMatchers("/api/login/**")
+                // .permitAll()
 
-        //         .authorizeExchange(exchange -> exchange
+                // .anyExchange()
+                // .authenticated())
 
-        //                 .pathMatchers("/api/login/**")
-        //                 .permitAll()
+                // .build();
 
-        //                 .pathMatchers("/admin/**")
-        //                 .hasRole("ADMIN")
+                // return http
+                // .csrf(ServerHttpSecurity.CsrfSpec::disable)
+                // .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
+                // .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
 
-        //                 .pathMatchers(HttpMethod.POST,"/api/shipments/**")
-        //                 .hasAuthority("USERS")
+                // .authorizeExchange(exchange -> exchange
+                // .anyExchange().permitAll())
 
-        //                 .anyExchange()
-        //                 .authenticated())
+                // .build();
 
-        //         .build();
+                // return http
+                // .csrf(ServerHttpSecurity.CsrfSpec::disable)
+                // .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
+                // .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
 
+                // .authorizeExchange(exchange -> exchange
 
+                // .pathMatchers("/api/login/**")
+                // .permitAll()
 
-        // return http
-        //     .csrf(ServerHttpSecurity.CsrfSpec::disable)
-        //     .authorizeExchange(exchange ->
-        //             exchange.anyExchange().permitAll())
-        //     .build();
-    }
+                // .pathMatchers("/admin/**")
+                // .hasRole("ADMIN")
+
+                // .pathMatchers(HttpMethod.POST,"/api/shipments/**")
+                // .hasAuthority("USERS")
+
+                // .anyExchange()
+                // .authenticated())
+
+                // .build();
+
+                // return http
+                // .csrf(ServerHttpSecurity.CsrfSpec::disable)
+                // .authorizeExchange(exchange ->
+                // exchange.anyExchange().permitAll())
+                // .build();
+        }
+
+        @Bean
+        JwtAuthenticationConverter jwtAuthenticationConverter() {
+
+                JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
+
+                converter.setJwtGrantedAuthoritiesConverter(
+                                new KeycloakRoleConverter());
+
+                return converter;
+        }
 }

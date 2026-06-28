@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class ResponseAdressDto {
+   
     private Long addressId;
     private String street;
     private String city;

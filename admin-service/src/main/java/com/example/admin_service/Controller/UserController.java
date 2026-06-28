@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.admin_service.Config.ResponseUserDto;
+import com.example.admin_service.Dto.ResponseUserDto;
 import com.example.admin_service.Service.UserService;
 
 import lombok.RequiredArgsConstructor;

@@ -7,12 +7,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.user_service.Service.UserService;
-import com.example.user_service.dto.LoginDto;
+import com.example.user_service.dto.RequestUpdateDto;
 import com.example.user_service.dto.RequestUserDto;
+import com.example.user_service.dto.ResponseUpdateDto;
 import com.example.user_service.dto.ResponseUserDto;
 
 import lombok.RequiredArgsConstructor;
@@ -24,8 +26,8 @@ public class UserContorller {
 
     private final UserService userService;
 
-    @GetMapping("/get/{email}")
-    public ResponseEntity<String> getUser(@PathVariable String email) {
+    @GetMapping("/get")
+    public ResponseEntity<String> getUser(@RequestHeader("X-USER-EMAIL") String email) {
         try {
             if (email == null) {
                 return ResponseEntity.badRequest().build();
@@ -40,26 +42,26 @@ public class UserContorller {
         }
     }
 
-    @GetMapping("/{userId}/exists")
-    public ResponseEntity<Boolean> checkUserExists(@PathVariable String userId) {
+    @GetMapping("/{keycloakUserid}/exists")
+    public ResponseEntity<Boolean> checkUserExists(@PathVariable String keycloakUserid) {
         try {
-            if (userId == null) {
+            if (keycloakUserid == null) {
                 return ResponseEntity.badRequest().build();
             }
-            boolean exists = userService.checkUserExists(userId);
+            boolean exists = userService.checkUserExists(keycloakUserid);
             return ResponseEntity.ok(exists);
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return ResponseEntity.status(500).build();
         }
     }
-    @GetMapping("/{UserId}")
-    public ResponseEntity<ResponseUserDto> getUserById(@PathVariable String UserId) {
+    @GetMapping("/{keycloakUserid}")
+    public ResponseEntity<ResponseUserDto> getUserById(@PathVariable String keycloakUserid) {
         try {
-            if (UserId == null) {
+            if (keycloakUserid == null) {
                 return ResponseEntity.badRequest().build();
             }
-            ResponseUserDto responseUserDto = userService.getUserById(UserId);
+            ResponseUserDto responseUserDto = userService.getUserById(keycloakUserid);
             if (responseUserDto == null) {
                 return ResponseEntity.notFound().build();
             }
@@ -72,6 +74,7 @@ public class UserContorller {
     @PostMapping("/register")
     public ResponseEntity<ResponseUserDto> registerUser(@RequestBody RequestUserDto requestUserDto) {
         try {
+             System.out.println("=== REGISTER API HIT ===");
             if (requestUserDto.getEmail() == null || requestUserDto.getPassword() == null) {
                 return ResponseEntity.badRequest().build();
             }
@@ -84,13 +87,13 @@ public class UserContorller {
         }
     }
 
-    @PutMapping("/update/{email}")
-    public ResponseEntity<ResponseUserDto> updateUser(@RequestBody RequestUserDto requestUserDto, @PathVariable String email) {
+    @PutMapping("/update")
+    public ResponseEntity<ResponseUpdateDto> updateUser(@RequestBody RequestUpdateDto requesUpdateDto, @RequestHeader("X-USER-EMAIL") String email) {
         try {
             if (email == null) {
                 return ResponseEntity.badRequest().build();
             }
-            ResponseUserDto responseUserDto = userService.UpdateData(requestUserDto,email);
+            ResponseUpdateDto responseUserDto = userService.UpdateData(requesUpdateDto,email);
             return ResponseEntity.ok(responseUserDto);
 
         } catch (Exception e) {
@@ -99,8 +102,8 @@ public class UserContorller {
         }
     }
 
-    @DeleteMapping("/delete/{email}")
-    public ResponseEntity<String> deleteUser(@PathVariable String email) {
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> deleteUser(@RequestHeader("X-USER-EMAIL") String email) {
         try {
             if (email == null) {
                 return ResponseEntity.badRequest().build();
@@ -115,17 +118,6 @@ public class UserContorller {
         }
     }
  
-    @GetMapping("/login/{email}")
-    public ResponseEntity<?> login(@PathVariable String email){
-        try{
-           LoginDto login=userService.getlogindetails(email);
-           if(login!=null){
-          return ResponseEntity.ok(login);
-           }
-           return ResponseEntity.badRequest().body("Failed to find");
-        }catch(Exception e) {
-            return ResponseEntity.status(500).build();
-        }
-    }
+   
     
 }

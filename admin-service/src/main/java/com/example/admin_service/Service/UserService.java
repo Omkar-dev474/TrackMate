@@ -4,8 +4,8 @@ package com.example.admin_service.Service;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
-import com.example.admin_service.Config.ResponseUserDto;
 import com.example.admin_service.Config.StreamUserConfig;
+import com.example.admin_service.Dto.ResponseUserDto;
 
 import lombok.RequiredArgsConstructor;
 

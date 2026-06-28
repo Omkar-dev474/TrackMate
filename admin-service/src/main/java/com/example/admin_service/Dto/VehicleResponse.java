@@ -1,4 +1,4 @@
-package com.example.partner_service.Dto;
+package com.example.admin_service.Dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,17 +9,21 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class DeliveryAgentResponse {
+public class VehicleResponse {
 
     private String id;
 
     private String partnerId;
 
-    private String name;
+    private String vehicleNumber;
 
-    private String phone;
+    private String vehicleType;
 
-    private String vechicleNumber;
+    private Double capacity;
+
+    private String registrationNumber;
+
+    private String insuranceNumber;
 
     private String status;
 }

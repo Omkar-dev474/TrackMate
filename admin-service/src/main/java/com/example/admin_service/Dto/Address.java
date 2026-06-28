@@ -1,4 +1,4 @@
-package com.example.admin_service.Config;
+package com.example.admin_service.Dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

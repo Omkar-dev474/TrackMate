@@ -34,11 +34,12 @@ public class User_Profile {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userProfileId;
 
+
+    private String keycloakUserid;
     private String firstName;
     private String lastName;
     private String email;
     private String role="USERS";
-    private String password;
     private String phoneNumber;
 
     @OneToOne(cascade = CascadeType.ALL)

@@ -21,7 +21,7 @@ public interface User_ProfileRepo extends JpaRepository<User_Profile, Long> {
 
 
 
-    User_Profile findByUserProfileId(String userId);
+    
 
 
 
@@ -31,5 +31,13 @@ public interface User_ProfileRepo extends JpaRepository<User_Profile, Long> {
 
 
     void deleteByUserProfileId(String userProfileId);
+
+
+
+    boolean existsByKeycloakUserid(String keycloakUserid);
+
+
+
+    User_Profile findByKeycloakUserid(String keycloakUserid);
     
 }

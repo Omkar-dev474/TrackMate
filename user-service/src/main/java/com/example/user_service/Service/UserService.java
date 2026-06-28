@@ -6,7 +6,9 @@ import org.springframework.stereotype.Service;
 import com.example.user_service.Model.User_Profile;
 import com.example.user_service.Repository.User_ProfileRepo;
 import com.example.user_service.dto.LoginDto;
+import com.example.user_service.dto.RequestUpdateDto;
 import com.example.user_service.dto.RequestUserDto;
+import com.example.user_service.dto.ResponseUpdateDto;
 import com.example.user_service.dto.ResponseUserDto;
 
 import lombok.RequiredArgsConstructor;
@@ -16,21 +18,27 @@ import lombok.RequiredArgsConstructor;
 public class UserService {
 
     private final User_ProfileRepo user_profileRepo;
+    private final  KeycloakService keycloakService;
 
     public ResponseUserDto registerUser(RequestUserDto requestUserDto) {
-        User_Profile userProfile = new User_Profile();
-        userProfile.setFirstName(requestUserDto.getFirstName());
-        userProfile.setLastName(requestUserDto.getLastName());
-        userProfile.setEmail(requestUserDto.getEmail());
-        userProfile.setPassword(requestUserDto.getPassword());
-        userProfile.setPhoneNumber(requestUserDto.getPhoneNumber());
-        userProfile.setAddress(requestUserDto.getAddress());
-        userProfile.setProfilePictureUrl(requestUserDto.getProfilePictureUrl());
-        userProfile.setBio(requestUserDto.getBio());
-        userProfile.setDateOfBirth(requestUserDto.getDateOfBirth());
-        userProfile.setGender(requestUserDto.getGender());
-        user_profileRepo.save(userProfile);
-        return mapDtoResponseDto(requestUserDto);
+        System.out.println("=== SERVICE HIT ===");
+       String userId=keycloakService.createUser(requestUserDto);
+    System.out.println("In service class "+userId);
+    User_Profile userProfile = new User_Profile();
+    userProfile.setKeycloakUserid(userId);
+    userProfile.setFirstName(requestUserDto.getFirstName());
+    userProfile.setLastName(requestUserDto.getLastName());
+    userProfile.setEmail(requestUserDto.getEmail());
+    userProfile.setBio(requestUserDto.getBio());
+    userProfile.setDateOfBirth(requestUserDto.getDateOfBirth());
+    userProfile.setPhoneNumber(requestUserDto.getPhoneNumber());
+    userProfile.setAddress(requestUserDto.getAddress());
+    userProfile.setGender(requestUserDto.getGender());
+    userProfile.setProfilePictureUrl(requestUserDto.getProfilePictureUrl());
+    System.out.println("User saved");
+    user_profileRepo.save(userProfile);
+
+    return mapDtoResponseDto(requestUserDto);
     }
 
     public ResponseUserDto mapDtoResponseDto(RequestUserDto requestUserDto) {
@@ -48,44 +56,59 @@ public class UserService {
         return responseUserDto;
 
     }
+ public ResponseUpdateDto mapDtoResponseUpdateDto(RequestUpdateDto requestUpadateDto) {
+        ResponseUpdateDto responseUpdateDto = new ResponseUpdateDto();
+        responseUpdateDto.setFirstName(requestUpadateDto.getFirstName());
+        responseUpdateDto.setLastName(requestUpadateDto.getLastName());
+        responseUpdateDto.setEmail(requestUpadateDto.getEmail());
+        responseUpdateDto.setPhoneNumber(requestUpadateDto.getPhoneNumber());
+        responseUpdateDto.setAddress(requestUpadateDto.getAddress());
+        responseUpdateDto.setProfilePictureUrl(requestUpadateDto.getProfilePictureUrl());
+        responseUpdateDto.setBio(requestUpadateDto.getBio());
+        responseUpdateDto.setDateOfBirth(requestUpadateDto.getDateOfBirth());
+        responseUpdateDto.setGender(requestUpadateDto.getGender());
 
+        return responseUpdateDto;
+
+    }
   
 
-    public ResponseUserDto UpdateData(RequestUserDto requestUserDto,String email) {
-        User_Profile userProfile = user_profileRepo.findByEmail(requestUserDto.getEmail());
+    public ResponseUpdateDto UpdateData(RequestUpdateDto requesUpdateDto,String email) {
+        User_Profile userProfile = user_profileRepo.findByEmail(requesUpdateDto.getEmail());
         if (userProfile == null) {
             throw new RuntimeException("User not found");
         }
+
         System.out.println(userProfile.getEmail()+" "+email);
         if(!userProfile.getEmail().equalsIgnoreCase(email)){
             throw new RuntimeException("Email cannot be updated");
         }
-        if (requestUserDto.getFirstName() != null) {
-            userProfile.setFirstName(requestUserDto.getFirstName());
+        if (requesUpdateDto.getFirstName() != null) {
+            userProfile.setFirstName(requesUpdateDto.getFirstName());
         }
-        if (requestUserDto.getLastName() != null) {
-            userProfile.setLastName(requestUserDto.getLastName());
+        if (requesUpdateDto.getLastName() != null) {
+            userProfile.setLastName(requesUpdateDto.getLastName());
         }
-        if (requestUserDto.getPhoneNumber() != null) {
-            userProfile.setPhoneNumber(requestUserDto.getPhoneNumber());
+        if (requesUpdateDto.getPhoneNumber() != null) {
+            userProfile.setPhoneNumber(requesUpdateDto.getPhoneNumber());
         }
-        if (requestUserDto.getAddress() != null) {
-            userProfile.setAddress(requestUserDto.getAddress());
+        if (requesUpdateDto.getAddress() != null) {
+            userProfile.setAddress(requesUpdateDto.getAddress());
         }
-        if (requestUserDto.getProfilePictureUrl() != null) {
-            userProfile.setProfilePictureUrl(requestUserDto.getProfilePictureUrl());
+        if (requesUpdateDto.getProfilePictureUrl() != null) {
+            userProfile.setProfilePictureUrl(requesUpdateDto.getProfilePictureUrl());
         }
-        if (requestUserDto.getBio() != null) {
-            userProfile.setBio(requestUserDto.getBio());
+        if (requesUpdateDto.getBio() != null) {
+            userProfile.setBio(requesUpdateDto.getBio());
         }
-        if (requestUserDto.getDateOfBirth() != null) {
-            userProfile.setDateOfBirth(requestUserDto.getDateOfBirth());
+        if (requesUpdateDto.getDateOfBirth() != null) {
+            userProfile.setDateOfBirth(requesUpdateDto.getDateOfBirth());
         }
-        if (requestUserDto.getGender() != null) {
-            userProfile.setGender(requestUserDto.getGender());
+        if (requesUpdateDto.getGender() != null) {
+            userProfile.setGender(requesUpdateDto.getGender());
         }
         user_profileRepo.save(userProfile);
-        return mapDtoResponseDto(requestUserDto);
+        return mapDtoResponseUpdateDto(requesUpdateDto);
     }
 
     public boolean deleteUser(String email) {
@@ -116,12 +139,12 @@ public class UserService {
         return responseUserDto;
     }
 
-    public boolean checkUserExists(String userId) {
-        return user_profileRepo.existsByUserProfileId(userId);
+    public boolean checkUserExists(String keycloakUserid) {
+        return user_profileRepo.existsByKeycloakUserid(keycloakUserid);
     }
 
-    public ResponseUserDto getUserById(String userId) {
-        User_Profile userProfile= user_profileRepo.findByUserProfileId(userId);
+    public ResponseUserDto getUserById(String keycloakUserid) {
+        User_Profile userProfile= user_profileRepo.findByKeycloakUserid(keycloakUserid);
         if (userProfile == null) {
             throw new RuntimeException("User not found");
         }
@@ -146,7 +169,7 @@ public class UserService {
             LoginDto login=new LoginDto();
             login.setUserProfileId(user.getUserProfileId());
             login.setEmail(user.getEmail());
-            login.setPassword(user.getPassword());
+           // login.setPassword(user.getPassword());
             login.setRole(user.getRole());
             return login;
         }

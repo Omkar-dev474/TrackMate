@@ -18,7 +18,7 @@ import io.jsonwebtoken.security.Keys;
 @Service
 public class JwtUtils {
 
-	private static final String SECRET_KEY = "kuhvlaeubljabvliheilvgbvlaijesbgvaievbaiwjacopsocps";
+	private static final String SECRET_KEY = "YOUR_SRECRET-KEY";
 
 	public SecretKey generateKey() {
     return Keys.hmacShaKeyFor(
