@@ -57,6 +57,3 @@ TrackMate is a logistics and shipment tracking system developed using Spring Boo
 - Eureka Server
 - Config Server
 - Maven
-
-## Architecture Diagram
-
