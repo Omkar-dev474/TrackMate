@@ -57,7 +57,7 @@ TrackMate is a logistics and shipment tracking system developed using Spring Boo
 
 ```mermaid
 graph TD
-    Client[Client] --> Gateway[API Gateway]
+    Client[Client / Frontend] --> Gateway[API Gateway]
 
     Gateway --> User[User Service]
     Gateway --> Shipment[Shipment Service]
@@ -65,16 +65,30 @@ graph TD
     Gateway --> Partner[Partner Service]
     Gateway --> Admin[Admin Service]
 
-    Shipment --> Kafka[Kafka / Spring Cloud Stream]
-    Tracking --> Kafka
+    Gateway --> Keycloak[Keycloak]
 
-    User --> Postgres[(PostgreSQL)]
-    Tracking --> Postgres
-    Shipment --> Mongo[(MongoDB)]
+    User --> UserDB[(PostgreSQL)]
+    Admin --> AdminDB[(PostgreSQL)]
 
-    User --> Redis[(Redis Cache)]
+    Shipment --> ShipmentDB[(MongoDB)]
+    Partner --> PartnerDB[(MongoDB)]
+
+    Shipment --> Redis[(Redis Cache)]
+
+    Tracking --> Kafka[Apache Kafka]
+    Kafka --> Shipment
+
+    Config[Config Server] --> Gateway
+    Config --> User
+    Config --> Shipment
+    Config --> Tracking
+    Config --> Partner
+    Config --> Admin
 
     Gateway --> Eureka[Eureka Server]
-    Gateway --> Config[Config Server]
-    Gateway --> Keycloak[Keycloak]
+    User --> Eureka
+    Shipment --> Eureka
+    Tracking --> Eureka
+    Partner --> Eureka
+    Admin --> Eureka
 ```
