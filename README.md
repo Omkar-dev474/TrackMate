@@ -52,3 +52,29 @@ TrackMate is a logistics and shipment tracking system developed using Spring Boo
 - Eureka Server
 - Config Server
 - Maven
+
+## Architecture Diagram
+
+```mermaid
+graph TD
+    Client[Client] --> Gateway[API Gateway]
+
+    Gateway --> User[User Service]
+    Gateway --> Shipment[Shipment Service]
+    Gateway --> Tracking[Tracking Service]
+    Gateway --> Partner[Partner Service]
+    Gateway --> Admin[Admin Service]
+
+    Shipment --> Kafka[Kafka / Spring Cloud Stream]
+    Tracking --> Kafka
+
+    User --> Postgres[(PostgreSQL)]
+    Tracking --> Postgres
+    Shipment --> Mongo[(MongoDB)]
+
+    User --> Redis[(Redis Cache)]
+
+    Gateway --> Eureka[Eureka Server]
+    Gateway --> Config[Config Server]
+    Gateway --> Keycloak[Keycloak]
+```
