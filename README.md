@@ -1,6 +1,11 @@
 # TrackMate
 
 TrackMate is a logistics and shipment tracking system developed using Spring Boot microservices architecture. It provides features such as user management, shipment creation, real-time tracking, secure authentication and authorization using Keycloak, API Gateway, service discovery with Eureka, centralized configuration, and asynchronous communication using Kafka.
+
+## Architecture Diagram
+<img width="1536" height="1024" alt="Architecture" src="https://github.com/user-attachments/assets/0b2f9439-69cf-4a0f-acc4-862b4e4891a7" />
+
+
 ## Features
 - Secure authentication and authorization using Keycloak and JWT
 - API Gateway for centralized routing, security, and request filtering
@@ -55,40 +60,3 @@ TrackMate is a logistics and shipment tracking system developed using Spring Boo
 
 ## Architecture Diagram
 
-```mermaid
-graph TD
-    Client[Client / Frontend] --> Gateway[API Gateway]
-
-    Gateway --> User[User Service]
-    Gateway --> Shipment[Shipment Service]
-    Gateway --> Tracking[Tracking Service]
-    Gateway --> Partner[Partner Service]
-    Gateway --> Admin[Admin Service]
-
-    Gateway --> Keycloak[Keycloak]
-
-    User --> UserDB[(PostgreSQL)]
-    Admin --> AdminDB[(PostgreSQL)]
-
-    Shipment --> ShipmentDB[(MongoDB)]
-    Partner --> PartnerDB[(MongoDB)]
-
-    Shipment --> Redis[(Redis Cache)]
-
-    Tracking --> Kafka[Apache Kafka]
-    Kafka --> Shipment
-
-    Config[Config Server] --> Gateway
-    Config --> User
-    Config --> Shipment
-    Config --> Tracking
-    Config --> Partner
-    Config --> Admin
-
-    Gateway --> Eureka[Eureka Server]
-    User --> Eureka
-    Shipment --> Eureka
-    Tracking --> Eureka
-    Partner --> Eureka
-    Admin --> Eureka
-```
